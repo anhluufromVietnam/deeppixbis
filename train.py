@@ -61,7 +61,7 @@ class trainDeepPix(object):
 
         return torch.sum((yTrue == yPred).type(torch.LongTensor), dim=0)/float(yTrue.shape[0])
 
-    def train(self, ImgList, LabelList, mtcnn, batch_size=32, epochs=50):
+    def train(self, ImgList, LabelList, mtcnn, batch_size=32, epochs=50, detectFace=True):
 
         r'''
         Utility to train DeepPix Model,
@@ -73,14 +73,14 @@ class trainDeepPix(object):
         
         ImgArray = []
 
-        widgets = [f"Cropping faces: ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
+        widgets = [f"Cropping faces: " if detectFace else f"Preprocessing Data: ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
 
         pbar = progressbar.ProgressBar(maxval=len(ImgList), widgets=widgets).start()
 
         __ctr = 0
         
         for img in ImgList:
-            res = cropFace(mtcnn, img)
+            res = cropFace(mtcnn, img, detectFace=detectFace)
             if res is not None:
                 ImgArray.append(res.unsqueeze(0))
             else:
@@ -89,20 +89,13 @@ class trainDeepPix(object):
             pbar.update(__ctr)
             __ctr+=1
 
-        try:
-            ImgArray = torch.cat(ImgArray, dim=0)
-        except:
-            raise RuntimeError("Img Array empty")
-
         pbar.finish()
-        
-        LabelList = torch.tensor(LabelList).type(torch.FloatTensor)
 
         for epoch in range(epochs):
 
             widgets = [f"Epoch {epoch+1}/{epochs} ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
 
-            pbar = progressbar.ProgressBar(maxval=np.arange(0, ImgArray.shape[0], batch_size).shape[0], widgets=widgets).start()
+            pbar = progressbar.ProgressBar(maxval=np.arange(0, len(ImgArray), batch_size).shape[0], widgets=widgets).start()
 
             __ctr = 0
 
@@ -110,10 +103,10 @@ class trainDeepPix(object):
             batch_accClass = []
             batch_accSeg = []
 
-            for item in np.arange(0, ImgArray.shape[0], batch_size):
+            for item in np.arange(0, len(ImgArray), batch_size):
 
-                trainX = ImgArray[item:item+batch_size]
-                trainY = LabelList[item:item+batch_size]
+                trainX = torch.cat(ImgArray[item:item+batch_size], dim=0)
+                trainY = torch.cat(LabelList[item:item+batch_size], dim=0)
 
                 if CUDA:
                     trainX = trainX.cuda()
@@ -145,7 +138,7 @@ class trainDeepPix(object):
             print(f'Summary -> train_loss:: {mean(batch_loss)}, class_acc:: {mean(batch_accClass)}, seg_acc:: {mean(batch_accSeg)}')
 
 
-    def predict(self, ImgList, mtcnn, batch_size=16, thresh=0.5, testLabel=None):
+    def predict(self, ImgList, mtcnn, batch_size=16, thresh=0.5, testLabel=None, detectFace=True):
 
         r'''
         Utility to predict `spoof/bonafide` viz `0/1` given list
@@ -162,7 +155,7 @@ class trainDeepPix(object):
 
         ImgArray = []
 
-        widgets = [f"Cropping faces: ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
+        widgets = [f"Cropping faces: " if detectFace else f"Preprocessing Data: ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
 
         pbar = progressbar.ProgressBar(maxval=len(ImgList), widgets=widgets).start()
 
@@ -170,7 +163,7 @@ class trainDeepPix(object):
         
         for img in ImgList:
 
-            res = cropFace(mtcnn, img)
+            res = cropFace(mtcnn, img, detectFace=detectFace)
             if res is not None:
                 ImgArray.append(res.unsqueeze(0))
             else:
@@ -180,21 +173,21 @@ class trainDeepPix(object):
             pbar.update(__ctr)
             __ctr+=1
 
-        ImgArray = torch.cat(ImgArray, dim=0)
+        # ImgArray = torch.cat(ImgArray, dim=0)
 
         pbar.finish()
 
-        returnY = np.zeros((ImgArray.shape[0]), dtype="uint8")
+        returnY = np.zeros((len(ImgArray)), dtype="uint8")
 
         widgets = [f"Predicting ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
 
-        pbar = progressbar.ProgressBar(maxval=np.arange(0, ImgArray.shape[0], batch_size).shape[0], widgets=widgets).start()
+        pbar = progressbar.ProgressBar(maxval=np.arange(0, len(ImgArray), batch_size).shape[0], widgets=widgets).start()
 
         __ctr = 0
 
-        for item in np.arange(0, ImgArray.shape[0], batch_size):
+        for item in np.arange(0, len(ImgArray), batch_size):
 
-            _, segPred = self.model(ImgArray[item:item+batch_size].cuda() if CUDA else ImgArray[item:item+batch_size])
+            _, segPred = self.model(torch.cat(ImgArray[item:item+batch_size], dim=0).cuda() if CUDA else torch.cat(ImgArray[item:item+batch_size], dim=0))
 
             segPred = segPred.view(segPred.shape[0], -1)
 

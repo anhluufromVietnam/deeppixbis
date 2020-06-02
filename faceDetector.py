@@ -4,6 +4,7 @@ import torch
 from torchvision import transforms
 from PIL import Image
 import warnings
+import numpy as np
 
 preprocess = transforms.Compose([
     transforms.ToPILImage(),
@@ -13,7 +14,7 @@ preprocess = transforms.Compose([
 ])
 
 
-def cropFace(mtcnn, PILImage):
+def cropFace(mtcnn, PILImage, detectFace=True):
 
     r'''
     Utility to perform face extraction from raw images
@@ -21,7 +22,12 @@ def cropFace(mtcnn, PILImage):
     '''
     name = PILImage
     PILImage = Image.open(PILImage)
-    img_cropped = mtcnn(PILImage, save_path=None)
+
+    if detectFace is True:
+        img_cropped = mtcnn(PILImage, save_path=None)
+    else:
+        img_cropped = torch.tensor(np.array(PILImage))
+
     if img_cropped is None:
         print("[WARNING] Face not found for {}, skipping this image...".format(name))
         return None
