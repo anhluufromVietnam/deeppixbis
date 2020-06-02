@@ -80,7 +80,12 @@ class trainDeepPix(object):
         __ctr = 0
         
         for img in ImgList:
-            ImgArray.append(cropFace(mtcnn, img).unsqueeze(0))
+            res = cropFace(mtcnn, img)
+            if res is not None:
+                ImgArray.append(res.unsqueeze(0))
+            else:
+                del LabelList[__ctr]
+
             pbar.update(__ctr)
             __ctr+=1
 
@@ -140,7 +145,7 @@ class trainDeepPix(object):
             print(f'Summary -> train_loss:: {mean(batch_loss)}, class_acc:: {mean(batch_accClass)}, seg_acc:: {mean(batch_accSeg)}')
 
 
-    def predict(self, ImgList, mtcnn, batch_size=32, thresh=0.5):
+    def predict(self, ImgList, mtcnn, batch_size=16, thresh=0.5, testLabel=None):
 
         r'''
         Utility to predict `spoof/bonafide` viz `0/1` given list
@@ -164,7 +169,14 @@ class trainDeepPix(object):
         __ctr = 0
         
         for img in ImgList:
-            ImgArray.append(cropFace(mtcnn, img).unsqueeze(0))
+
+            res = cropFace(mtcnn, img)
+            if res is not None:
+                ImgArray.append(res.unsqueeze(0))
+            else:
+                if testLabel is not None:
+                    del testLabel[__ctr]
+
             pbar.update(__ctr)
             __ctr+=1
 

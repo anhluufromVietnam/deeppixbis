@@ -28,7 +28,7 @@ import random
 from sklearn.metrics import accuracy_score, classification_report
 
 # Training on GPU `0`
-torch.cuda.set_device(0)
+torch.cuda.set_device(3)
 TRAIN = False # Set to True if you want to train
 DEVICE = torch.device("cuda")
 
@@ -45,8 +45,8 @@ if torch.cuda.is_available():
 mtcnn = MTCNN(margin=14, image_size=160, device=DEVICE)
 
 # Get list of image paths
-liveImagePath = list(paths.list_images('./live')) 
-spoofImagePath = list(paths.list_images('./spoof'))
+liveImagePath = list(paths.list_images('/mnt/abhishek/Russian/val_russian_dataset_live')) 
+spoofImagePath = list(paths.list_images('/mnt/abhishek/Russian/val_russian_dataset_spoof'))
 
 trainList = []
 
@@ -80,8 +80,8 @@ else:
 
 #Preparing Test Data
 
-liveImagePath = list(paths.list_images('./liveTest'))
-spoofImagePath = list(paths.list_images('./spoofTest'))
+liveImagePath = list(paths.list_images('/mnt/abhishek/Russian/test_1/image_russian_dataset_live'))
+spoofImagePath = list(paths.list_images('/mnt/abhishek/Russian/test_1/image_russian_dataset_spoof'))
 
 testList = []
 
@@ -93,12 +93,13 @@ for spoof in spoofImagePath:
 
 # Shuffle the list to generate randomness
 random.shuffle(testList)
+testList = testList[:int(0.1*len(testList))]
 
 testPath = [x[0] for x in testList]
 testLabel = [x[1] for x in testList]
 
 # Prediction from network
-pred = trainObject.predict(testPath, mtcnn=mtcnn, thresh=0.5)
+pred = trainObject.predict(testPath, mtcnn=mtcnn, thresh=0.5, testLabel=testLabel)
 
 testLabel = np.array(testLabel, dtype="uint8")
 
