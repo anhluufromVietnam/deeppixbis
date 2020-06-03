@@ -106,7 +106,7 @@ class trainDeepPix(object):
             for item in np.arange(0, len(ImgArray), batch_size):
 
                 trainX = torch.cat(ImgArray[item:item+batch_size], dim=0)
-                trainY = torch.cat(LabelList[item:item+batch_size], dim=0)
+                trainY = torch.tensor(LabelList[item:item+batch_size]).type(torch.FloatTensor)
 
                 if CUDA:
                     trainX = trainX.cuda()
