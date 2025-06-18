@@ -77,7 +77,7 @@ python capture_webcam.py
 ## Ghi chú
 
 * Google Colab **không hỗ trợ webcam trực tiếp.** Nếu cần chụp ảnh, bạn phải chạy trên máy tính cá nhân.
-* Nếu gặp lỗi `git push rejected`, bạn có thể dùng `git push -f` để force push.
+* Hướng dẫn chi tiết hơn ở phần tiếng Anh.
 
 ## Tác giả
 
@@ -85,10 +85,6 @@ python capture_webcam.py
 * Fork và phát triển thêm: [Anh Lưu](https://github.com/anhluufromVietnam/deeppixbis/)
 
 ---
-
----
-
-# CAS\_TBM - Face Anti-Spoofing using DeepPixBis
 
 ## 📌 Description
 
