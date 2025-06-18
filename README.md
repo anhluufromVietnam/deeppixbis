@@ -1,5 +1,7 @@
 # CAS\_TBM - Face Anti-Spoofing using DeepPixBis
 
+* CÓ FILE CAS_TBM.ipynb chạy notebook, vào file đó có hướng dẫn chạy chi tiết
+
 ## Mô tả
 
 Đây là project sử dụng mô hình **DeepPixBis** để phát hiện ảnh giả mạo (spoof) và ảnh thật (live) trong bài toán chống giả mạo khuôn mặt.
@@ -52,7 +54,7 @@ TRAIN = False
 * Chạy file:
 
 ```bash
-python main.py
+python newmain.py
 ```
 
 ### 3. Kết quả
@@ -163,7 +165,7 @@ TRAIN = False
 Then run:
 
 ```bash
-python main.py
+python newmain.py
 ```
 
 ### 🔹 Result Example
