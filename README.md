@@ -13,7 +13,7 @@ Project này thực hiện quá trình:
 ## Hướng dẫn cài đặt
 
 ```bash
-git clone https://github.com/your-username/deeppixbis.git
+git clone https://github.com/anhluufromVietnam/deeppixbis.git
 cd deeppixbis
 pip install -r requirements.txt
 ```
@@ -82,6 +82,145 @@ python capture_webcam.py
 ## Tác giả
 
 * Gốc: [Abhishek Bhardwaj](https://github.com/AbhishekBhardwaj123)
-* Fork và phát triển thêm: [Anh Lưu]([https://github.com/your-username](https://github.com/anhluufromVietnam/deeppixbis/))
+* Fork và phát triển thêm: [Anh Lưu](https://github.com/anhluufromVietnam/deeppixbis/)
 
 ---
+
+---
+
+# CAS\_TBM - Face Anti-Spoofing using DeepPixBis
+
+## 📌 Description
+
+This project applies the **DeepPixBis** model to detect **spoof (fake)** and **live (genuine)** face images in face anti-spoofing tasks.
+
+The pipeline includes:
+
+* Image Preprocessing
+* Face Cropping
+* DeepPixBis Model Training
+* Model Evaluation on Test Set
+* Visualization of Predictions and Confidence
+
+---
+
+## 📂 Dataset Structure
+
+Organize your dataset as follows:
+
+```
+DeepPixBis/
+│
+├── live/     # Genuine face images
+│   ├── live1.jpg
+│   ├── live2.jpg
+│   └── ...
+│
+└── spoof/    # Spoof face images
+    ├── spoof1.jpg
+    ├── spoof2.jpg
+    └── ...
+```
+
+---
+
+## 🚀 Installation
+
+```bash
+git clone https://github.com/anhluufromVietnam/deeppixbis.git
+cd deeppixbis
+pip install -r requirements.txt
+```
+
+Or install manually:
+
+```bash
+pip install facenet-pytorch imutils scikit-learn opencv-python
+```
+
+---
+
+## ✅ How to Use
+
+### 🔹 Training the Model
+
+In `main.py`, set:
+
+```python
+TRAIN = True
+```
+
+Then run:
+
+```bash
+python main.py
+```
+
+### 🔹 Using Pre-trained Model
+
+Keep:
+
+```python
+TRAIN = False
+```
+
+Then run:
+
+```bash
+python main.py
+```
+
+### 🔹 Result Example
+
+The script will print the **accuracy** and detailed **classification report**.
+
+Example:
+
+```
+File: live1.jpg - Prediction: Live (Confidence: 94.3%)
+File: spoof3.jpg - Prediction: Spoof (Confidence: 88.5%)
+
+Classification Accuracy Obtained: 91.5%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+       Live       0.92      0.95      0.93       20
+      Spoof      0.91      0.85      0.88       20
+
+    accuracy                           0.92       40
+```
+
+---
+
+## 🎥 Webcam Capture (Local Machine Only)
+
+You can capture images directly using:
+
+```bash
+python capture_webcam.py
+```
+
+* Press `l` to capture an live image.
+* Press `s` to capture an spoof image.
+* Press `q` to quit.
+* Images will be saved to `live/` or `spoof/` based on your selection.
+
+> ⚠️ **Google Colab does not support webcam. Run this script on your PC.**
+
+---
+
+## 📸 Sample Result Images (You can insert later)
+
+| Image               | Prediction | Confidence |
+| ------------------- | ---------- | ---------- |
+| ![](path_to_image1) | Live       | 94.3%      |
+| ![](path_to_image2) | Spoof      | 88.5%      |
+
+---
+
+## 🙏 Credits
+
+* Original Author: [Abhishek Bhardwaj](https://github.com/AbhishekBhardwaj123)
+* Forked and Extended by: [Anh Lưu](https://github.com/anhluufromVietnam/deeppixbis/)
+
